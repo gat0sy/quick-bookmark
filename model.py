@@ -9,7 +9,7 @@ def get_connection():
         database="bookmark_db"
     )
 
-# --- Typical pattern for INSERT ---
+###############
 def add_link(title, url, details=None, group="GLOBAL"):
     conn = get_connection()
     cursor = conn.cursor()
@@ -29,7 +29,7 @@ def add_link(title, url, details=None, group="GLOBAL"):
     conn.close()
     return new_id
 
-# --- Typical pattern for SELECT (one row) ---
+###############
 def get_link(id: int):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)  # dictionary=True gives column names
@@ -43,7 +43,7 @@ def get_link(id: int):
     conn.close()
     return row
 
-# --- Typical pattern for SELECT (all rows) ---
+###############
 def get_links():
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
@@ -57,7 +57,7 @@ def get_links():
     conn.close()
     return rows
 
-# --- Typical pattern for UPDATE ---
+###############
 def edit_link(id: int, title=None, url=None, details=None, group=None):
     conn = get_connection()
     cursor = conn.cursor()
@@ -72,13 +72,13 @@ def edit_link(id: int, title=None, url=None, details=None, group=None):
     cursor.execute(sql, values)
     conn.commit()
 
-    updated = cursor.rowcount  # UPDATE/DELETE → use rowcount
+    updated = cursor.rowcount
 
     cursor.close()
     conn.close()
     return updated
 
-# --- Typical pattern for DELETE ---
+###############
 def delete_link(id: int):
     conn = get_connection()
     cursor = conn.cursor()
@@ -93,6 +93,22 @@ def delete_link(id: int):
     conn.close()
     return deleted
 
+###############
+def search_by_title(title):
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    sql = "SELECT * FROM links WHERE title LIKE %s"
+    pattern = f"%{title}%"
+
+    cursor.execute(sql, (pattern,))
+    result = cursor.fetchall
+
+    cursor.close()
+    conn.close()
+    return result
+
+###############
 def count_in_group(groupe_name):
     conn = get_connection()
     cursor = conn.cursor()
@@ -108,7 +124,7 @@ def count_in_group(groupe_name):
     return result
 
 
-# --- Typical pattern for SELECT DISTINCT ---
+###############
 def list_groups():
     conn = get_connection()
     cursor = conn.cursor()
@@ -121,3 +137,18 @@ def list_groups():
     cursor.close()
     conn.close()
     return groups
+
+###############
+def search_by_groupe(groupe_name):
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    sql = "SELECT * FROM links WHERE title LIKE %s"
+    pattern = f"%{groupe_name}%"
+
+    cursor.execute(sql, (pattern,))
+    result = cursor.fetchall
+
+    cursor.close()
+    conn.close()
+    return result
